@@ -104,6 +104,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -112,13 +118,27 @@ jobs:
       - name: Install System Tools & fdroidserver
         run: |
           sudo apt-get update
-          sudo apt-get install -y fdroidserver apksigner
+          sudo apt-get install -y pipx apksigner
+          pipx install fdroidserver
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          # Find latest Android build-tools on runner
+          LATEST_BT=$(ls -d $ANDROID_HOME/build-tools/* 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$LATEST_BT" ]; then
+            echo "$LATEST_BT" >> $GITHUB_PATH
+          fi
+          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
       - name: Restore Keystore from Secrets
         env:
           KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
         run: |
+          PASS="${KEYSTORE_PASSWORD:-PureAdmin2026SecureKey}"
           echo "$KEYSTORE_BASE64" | base64 --decode > keystore.jks
+          keytool -importkeystore \
+            -srckeystore keystore.jks -srcstoretype JKS -srcstorepass "$PASS" \
+            -destkeystore keystore.p12 -deststoretype PKCS12 -deststorepass "$PASS" \
+            -srcalias pureadmin -destalias pureadmin -noprompt
 
       - name: Download Built APK
         uses: actions/download-artifact@v4
@@ -146,7 +166,7 @@ jobs:
           cp fdroid/com.purelymail.admin.yml fdroid_build/metadata/com.purelymail.admin.yml
           
           # Move keystore to build directory
-          mv keystore.jks fdroid_build/keystore.jks
+          mv keystore.p12 fdroid_build/keystore.p12
           
           PASS="${KEYSTORE_PASSWORD:-PureAdmin2026SecureKey}"
           cat << EOF > fdroid_build/config.yml
@@ -155,7 +175,7 @@ jobs:
           repo_icon: "icon.png"
           repo_description: "Official F-Droid repository for PureAdmin — lightweight, privacy-focused native Purelymail client."
           archive_older: 0
-          keystore: "keystore.jks"
+          keystore: "keystore.p12"
           keystorepass: "$PASS"
           keypass: "$PASS"
           repo_keyalias: "pureadmin"
@@ -164,7 +184,7 @@ jobs:
       - name: Compile and Sign F-Droid Index
         run: |
           cd fdroid_build
-          fdroid update --create-metadata
+          fdroid update --create-metadata --verbose
 
       - name: Assemble Public Pages Content
         env:
