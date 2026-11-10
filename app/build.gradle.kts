@@ -1,7 +1,17 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
+}
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+  if (keystorePropertiesFile.exists()) {
+    load(FileInputStream(keystorePropertiesFile))
+  }
 }
 
 android {
@@ -12,12 +22,30 @@ android {
     minSdk = 26
     targetSdk = 36
     versionCode = 1
-    versionName = "1.0"
+    versionName = "1.0.0"
+  }
+
+  signingConfigs {
+    create("release") {
+      if (keystorePropertiesFile.exists()) {
+        val storePath = keystoreProperties.getProperty("storeFile", "pureadmin-release.jks")
+        val resolved = if (file(storePath).exists()) file(storePath) else file("../$storePath")
+        storeFile = resolved
+        storePassword = keystoreProperties.getProperty("storePassword")
+        keyAlias = keystoreProperties.getProperty("keyAlias")
+        keyPassword = keystoreProperties.getProperty("keyPassword")
+        enableV1Signing = true
+        enableV2Signing = true
+        enableV3Signing = true
+        enableV4Signing = true
+      }
+    }
   }
 
   buildTypes {
     release {
       isMinifyEnabled = false
+      signingConfig = signingConfigs.getByName("release")
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }

@@ -1,113 +1,120 @@
-# PurelyAdmin ✉️
+# PureAdmin for Purelymail
 
-An Android management application for **Purelymail** built with **Kotlin**, **Jetpack Compose**, and **Material 3 Expressive Design**. 
+[![Release](https://img.shields.io/badge/Release-v1.0.0-5E35B1.svg?style=flat-square)](https://github.com/dheeth/purelyadmin/releases)
+[![Android](https://img.shields.io/badge/Android-8.0%2B%20(API%2026%2B)-00E5FF.svg?style=flat-square)](https://developer.android.com)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1-7F52FF.svg?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Compose](https://img.shields.io/badge/Jetpack%20Compose-Material%203-4285F4.svg?style=flat-square&logo=android&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![Direct Connection](https://img.shields.io/badge/Architecture-100%25%20Direct%20TLS-00C853.svg?style=flat-square)](#-privacy--security-architecture)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 
-PurelyAdmin implements **100% of Purelymail's 19 administrative API endpoints** into a clean mobile experience.
+A fast, modern, privacy-first native Android management client for [Purelymail](https://purelymail.com). Built with Kotlin, Jetpack Compose, and Material 3, PureAdmin brings full administrative control of your email infrastructure to your phone.
 
 ---
 
-## 🌟 Key Features & UX Innovations
+## 📥 Download & Install
 
-### 1. 📊 Executive Dashboard
-* **Real-Time Credit Balance**: Live account credit with visual threshold alerts (alerts when credit is low, e.g. < $2.00).
-* **One-Tap Webmail & Billing Shortcuts**: Quick access to Purelymail Webmail (`mail.purelymail.com`) and Billing Portal.
-* **DNS Alert Banner**: Highlights any custom domain with missing or unverified MX, SPF, DKIM, or DMARC records.
-* **Metric Cards**: Total mailboxes, connected domains, and active forwarding rules at a glance.
-* **Email Client Cheat Sheet**: Pre-filled IMAP/SMTP hostnames, ports, and SSL security settings with one-tap copy buttons.
+Download the latest signed production APK from the [Releases](https://github.com/dheeth/purelyadmin/releases) page:
 
-### 2. 👥 Mailbox (User) Management
-* **Instant Search & Filtering**: Live search by mailbox name or domain.
-* **New Mailbox Creator**: Full support for local parts, custom domain picker, built-in strong password generator, optional recovery email & phone, search indexing toggle, and welcome email switch.
-* **User Settings Sheet**: Modify password, enable/disable search indexing, allow/disallow self-service password reset, and enforce two-factor authentication (2FA).
-* **App Password Generator**: Generate application-specific passwords for email clients (Thunderbird, Apple Mail, K-9 Mail, Outlook) with custom friendly labels and instant copy.
-* **Password Reset & Recovery**: View, add, and delete recovery email addresses and phone numbers with MFA reset authority flags.
-* **Safety Safeguards**: Confirmation dialogs for destructive actions.
+* **[Download PureAdmin v1.0.0 APK](https://github.com/dheeth/purelyadmin/releases/download/v1.0.0/pureadmin-v1.0.0.apk)**
 
-### 3. 🌐 Custom Domains & DNS Health Center
-* **Live DNS Matrix**: Visual breakdown chips for `[MX]`, `[SPF]`, `[DKIM]`, and `[DMARC]`.
-* **TXT Ownership Code**: Automatic retrieval and one-click copy of the required DNS ownership verification string (`purelymail-ownership-proof=...`).
-* **Required DNS Cheat Sheet**: Pre-formatted MX records (priority 10), SPF TXT records, and DMARC policies.
-* **One-Tap "Recheck DNS"**: Query Purelymail to immediately re-verify DNS changes.
-* **Domain Feature Switches**: Toggle symbolic subaddressing (plus-tagging: `user+tag@domain`) and account reset permissions.
-* **Filter Shared Domains**: Easily toggle visibility for Purelymail's default shared domain (`@purelymail.com`).
+> **Android Installation Note**: Since PureAdmin is distributed independently outside the Google Play Store, Android will display a standard prompt asking to allow installations from your browser or file manager. The release APK is signed with a dedicated production RSA certificate using APK Signature Scheme v2 and v3.
 
-### 4. 🔀 Smart Routing & Instant Alias Generator
-* **One-Tap "Instant Service Alias"**: Create a disposable, private forwarding address for signups (e.g. `amazon.7a2f@yourdomain.com`) that delivers directly to your inbox.
-* **Preset Suggestions**: One-click presets for Amazon, Netflix, Banking, Newsletters, GitHub, Shopping, and Travel.
-* **Advanced Rule Creator**:
-  * Exact address matches (`press@domain.com`)
-  * Prefix wildcard matches (`newsletter-*@domain.com`)
-  * Catch-all rules (`*@domain.com`)
+---
+
+## ✨ Features
+
+### 📊 Executive Overview & Balance
+* **Real-Time Credit Monitor**: Track prepaid Purelymail balance with automated low-credit alert thresholds.
+* **Instant Shortcuts**: One-tap access to Purelymail Webmail (`https://inbox.purelymail.com/`) and the Billing portal.
+* **DNS Alert Banner**: Immediate proactive notification whenever any custom domain has missing or failing DNS records.
+* **Email Client Cheat Sheet**: Copy pre-formatted IMAP (`mail.purelymail.com:993`) and SMTP (`mail.purelymail.com:465 / 587`) hostnames and port configs in a single tap.
+
+### 👥 Mailbox (User) Management
+* **Fast Mailbox Search**: Real-time filtering across users and domain handles.
+* **Mailbox Creation**: Provision new users with custom domain selection, built-in strong password generation, recovery contact setup, and welcome email options.
+* **Dedicated App Passwords**: Generate and label application-specific passwords for third-party email clients (Thunderbird, Apple Mail, K-9 Mail, Outlook) without exposing your master account password.
+* **Recovery & Security Controls**: View, assign, or revoke recovery email addresses and phone numbers with MFA authorization options.
+* **Anti-Abuse Safeguards**: In-app guidance protecting against accidental policy violations (such as prohibited domain warming or bulk spam).
+
+### 🌐 Custom Domains & DNS Health Center
+* **Live DNS Health Matrix**: Real-time validation chips for `[MX]`, `[SPF]`, `[DKIM]`, and `[DMARC]`.
+* **One-Tap TXT Ownership Proof**: Retrieve and copy your domain's verification string (`purelymail-ownership-proof=...`) with one click.
+* **DNS Recheck Action**: Trigger an immediate server-side DNS re-scan after updating DNS records at your registrar.
+* **Domain Feature Toggles**: Control plus-addressing (symbolic subaddressing: `user+tag@domain`) and account password reset permissions.
+* **Shared Domain Filter**: Cleanly filter or include Purelymail's default shared domain (`@purelymail.com`).
+
+### 🔀 Smart Routing & Instant Service Aliases
+* **Instant Disposable Aliases**: Generate private, disposable forwarding addresses (e.g. `netflix.x8b2@yourdomain.com`) on the fly when signing up for web services.
+* **One-Click Service Presets**: Quick templates for Netflix, Amazon, Banking, Newsletters, GitHub, Travel, and Shopping.
+* **Advanced Rule Routing**:
+  * Exact address matches (`press@yourdomain.com`)
+  * Prefix wildcard rules (`orders-*@yourdomain.com`)
+  * Domain-wide catch-all rules (`*@yourdomain.com`)
   * Multiple forwarding target recipients
 
-### 5. 🛡️ Security, Settings & Demo Mode
-* **Encrypted Token Storage**: Saved securely using `EncryptedSharedPreferences` with AES-256 GCM encryption.
-* **Interactive Demo / Mock Mode**: Full mock implementation allowing complete interactive exploration of all app features without needing an API token.
-* **Connection Tester**: Immediate test of token validity with clear feedback.
-* **Custom Server URL**: Configurable base URL for testing or proxy setups.
+### ⚙️ Streamlined Settings
+* **Encrypted API Token Management**: View or update your token at any time with instant on-device encryption.
+* **Automatic Global Refresh**: Re-saving your token immediately refreshes live data across all dashboard screens.
+* **Safe Session Resets**: Disconnect or wipe local application data with safety confirmation dialogs.
 
 ---
 
-## 🛠️ Complete Purelymail API Coverage
+## 🛡️ Privacy & Security Architecture
 
-PurelyAdmin maps all **19 official Purelymail API endpoints**:
+PureAdmin was built from the ground up with a strict zero-knowledge security model:
 
-| API Category | Endpoint | PurelyAdmin Feature / UI Action |
-|:---|:---|:---|
-| **Billing** | `POST /api/v0/checkAccountCredit` | Live Account Balance card on Dashboard & Low Credit warning |
-| **Users** | `POST /api/v0/listUser` | Mailbox list with live search and domain badge |
-| **Users** | `POST /api/v0/getUser` | User detail sheet (2FA, search indexing, recovery status) |
-| **Users** | `POST /api/v0/createUser` | "New Mailbox" dialog with password generator |
-| **Users** | `POST /api/v0/modifyUser` | "Edit User" dialog (password, 2FA, indexing, reset permissions) |
-| **Users** | `POST /api/v0/deleteUser` | Safe delete mailbox confirmation dialog |
-| **App Passwords** | `POST /api/v0/createAppPassword` | App Password generator with client setup instructions |
-| **App Passwords** | `POST /api/v0/deleteAppPassword` | Revoke app password functionality |
-| **Password Reset** | `POST /api/v0/listPasswordReset` | Recovery methods list in user detail sheet |
-| **Password Reset** | `POST /api/v0/upsertPasswordReset` | "Add Recovery Method" dialog (Email / Phone + MFA reset) |
-| **Password Reset** | `POST /api/v0/deletePasswordReset` | Remove individual or all recovery methods |
-| **Domains** | `POST /api/v0/listDomains` | Domain cards with DNS health badges & shared domain filter |
-| **Domains** | `POST /api/v0/addDomain` | "Add Custom Domain" dialog with DNS ownership guidance |
-| **Domains** | `POST /api/v0/getOwnershipCode` | Copies DNS TXT ownership proof token in one click |
-| **Domains** | `POST /api/v0/updateDomainSettings` | Toggle plus-addressing, account reset, and trigger "Recheck DNS" |
-| **Domains** | `POST /api/v0/deleteDomain` | Delete domain with confirmation dialog |
-| **Routing** | `POST /api/v0/listRoutingRules` | Routing rules list with visual arrow flow and destination chips |
-| **Routing** | `POST /api/v0/createRoutingRule` | "New Rule" dialog & "Instant Service Alias" generator |
-| **Routing** | `POST /api/v0/deleteRoutingRule` | Delete routing rule with confirmation |
+1. **100% Direct Client-to-Server**: Every network request originates directly on your Android device and connects strictly to `https://purelymail.com/api/v0/` over TLS 1.3.
+2. **Zero Intermediary Servers**: There are no proxy servers, no middleware relays, no external cloud databases, and no third-party telemetry frameworks. We cannot see, log, or access your credentials or email metadata.
+3. **Hardware-Backed Encryption**: Your Purelymail API token is stored on-device using Android's `EncryptedSharedPreferences` backed by the hardware **Android Keystore** with AES-256 GCM encryption.
+4. **Minimal App Permissions**: The app requires only standard `INTERNET` and `ACCESS_NETWORK_STATE` permissions. It does not request access to contacts, storage, camera, location, or SMS.
+5. **Polite Request Pacing & Backoff**: Includes automated client-side request throttling and exponential backoff handling for HTTP 429 rate-limiting responses to ensure server stability.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## 🔑 Getting Started
 
-* **UI Framework**: Jetpack Compose with Material Design 3 (M3)
-* **Architecture**: Clean Architecture with MVVM / MVI pattern using Kotlin Coroutines & `StateFlow`
-* **Networking**: OkHttp 4 + Kotlinx Serialization JSON
-* **Storage & Security**: `androidx.security.crypto` (`EncryptedSharedPreferences` + Android Keystore)
-* **Dynamic Theming**: Purelymail royal purple brand colors (`#5E35B1`), light/dark adaptive color schemes, and Android 12+ Material You Dynamic Color support.
+1. Log in to your Purelymail account at **[purelymail.com/manage/account](https://purelymail.com/manage/account)**.
+2. Navigate to **API Keys** and generate a new token.
+3. Open **PureAdmin** on your phone.
+4. Paste your token and tap **Connect**.
 
 ---
 
-## 🚀 Building & Running
+## 🏗️ Building from Source
 
 ### Prerequisites
 * JDK 17 or JDK 21
-* Android SDK (API 35/36)
+* Android SDK (API 36)
 
-### Build the APK
+### Clone & Compile
 ```bash
+git clone https://github.com/dheeth/purelyadmin.git
+cd purelyadmin
+
+# Build debug APK
 ./gradlew assembleDebug
-```
-The compiled APK will be generated at:
-```
-app/build/outputs/apk/debug/app-debug.apk
+
+# Build production signed release APK
+./gradlew assembleRelease
 ```
 
-### Run Unit Tests
-```bash
-./gradlew testDebugUnitTest
+The compiled release APK will be located at:
+```
+app/build/outputs/apk/release/app-release.apk
 ```
 
-### Install onto an Android Device or Emulator
-```bash
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-```
-Or open the project in **Android Studio** and click **Run 'app'**.
+---
+
+## ⚖️ Legal & Disclaimer
+
+PureAdmin is an independent, open-source project developed for Purelymail users. 
+
+* PureAdmin is **not** affiliated with, authorized, maintained, sponsored, or endorsed by **Add Rabbit LLC** or **Purelymail**.
+* All product names, logos, and brands are property of their respective owners.
+* Mailboxes and routing rules created through PureAdmin remain subject to Purelymail's Terms of Service and Anti-Abuse Policies (domain warming, bulk unsolicited marketing, and deceptive automation are strictly prohibited by Purelymail).
+
+---
+
+## 📄 License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).

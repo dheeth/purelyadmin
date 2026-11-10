@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Keystore & Signing Secrets
+*.jks
+*.keystore
+keystore.properties
+
+# Release binaries (distributed via GitHub Releases)
+release/
