@@ -1,6 +1,20 @@
 package com.purelymail.admin.data.model
 
 import kotlinx.serialization.Serializable
+import java.io.IOException
+
+/**
+ * Custom exceptions for Purelymail API interactions.
+ */
+open class PurelymailApiException(
+    val code: String?,
+    override val message: String
+) : IOException("Purelymail Error${if (!code.isNullOrBlank()) " [$code]" else ""}: $message")
+
+class PurelymailRateLimitException(
+    val retryAfterSeconds: Long? = null,
+    message: String = "Purelymail rate limit reached. Please wait ${retryAfterSeconds ?: 5}s before retrying."
+) : PurelymailApiException("RATE_LIMIT_EXCEEDED", message)
 
 /**
  * Generic response wrapper returned by Purelymail API.

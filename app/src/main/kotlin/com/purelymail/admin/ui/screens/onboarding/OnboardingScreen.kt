@@ -68,19 +68,54 @@ fun OnboardingScreen(
             // Titles
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Welcome to PurelyAdmin",
+                    text = "PureAdmin",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "The complete companion app for your Purelymail email service.",
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = "Independent management client for Purelymail",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.secondary,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Connects directly from your device to Purelymail's official API.",
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
+            }
+
+            // Security & Direct Architecture badge
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+                border = CardDefaults.outlinedCardBorder(),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Shield,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "100% Direct & Private: Zero proxy servers. Your API key stays encrypted on your device via Android Keystore.",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 15.sp
+                    )
+                }
             }
 
             // Feature Highlights
@@ -96,21 +131,21 @@ fun OnboardingScreen(
                 ) {
                     FeatureRow(
                         icon = Icons.Default.MailOutline,
-                        iconColor = PmPurple600,
+                        iconColor = MaterialTheme.colorScheme.primary,
                         title = "Mailbox Management",
                         description = "Provision users, edit quotas, manage 2FA, and generate IMAP/SMTP app passwords in 1 tap."
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     FeatureRow(
                         icon = Icons.Default.Dns,
-                        iconColor = Color(0xFF007BFF),
+                        iconColor = MaterialTheme.colorScheme.secondary,
                         title = "Live DNS Verification",
                         description = "Inspect MX, SPF, DKIM, and DMARC health with automated checkups and TXT ownership helpers."
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     FeatureRow(
                         icon = Icons.Default.FlashOn,
-                        iconColor = PmDarkGreen,
+                        iconColor = MaterialTheme.colorScheme.tertiary,
                         title = "Instant Service Aliases",
                         description = "Generate private disposable forwarding addresses for Netflix, Amazon, or newsletters on the fly."
                     )
@@ -245,6 +280,14 @@ fun OnboardingScreen(
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = "PureAdmin is an independent utility and is not affiliated with or endorsed by Add Rabbit LLC / Purelymail.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
         }

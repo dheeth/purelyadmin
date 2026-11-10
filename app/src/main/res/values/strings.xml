@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">PurelyAdmin</string>
+    <string name="app_name">PureAdmin for Purelymail</string>
+    <string name="app_short_name">PureAdmin</string>
 </resources>
