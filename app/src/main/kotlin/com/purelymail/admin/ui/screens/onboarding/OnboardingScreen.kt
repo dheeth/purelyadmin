@@ -42,27 +42,31 @@ fun OnboardingScreen(
     var passwordVisible by remember { mutableStateOf(false) }
 
     Surface(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding(),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp, vertical = 36.dp),
+                .padding(horizontal = 20.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // App Logo
             Image(
                 painter = painterResource(id = R.drawable.purelymail_logo),
-                contentDescription = "Purelymail Logo",
+                contentDescription = "PureAdmin Logo",
                 modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(24.dp))
+                    .size(76.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .border(2.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(20.dp))
             )
 
             // Titles
@@ -245,14 +249,14 @@ fun OnboardingScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = "PureAdmin is an independent utility and is not affiliated with or endorsed by Add Rabbit LLC / Purelymail.",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
             )
         }
     }

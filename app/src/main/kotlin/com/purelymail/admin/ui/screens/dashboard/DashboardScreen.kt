@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.AltRoute
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,10 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.purelymail.admin.R
@@ -80,9 +84,6 @@ fun DashboardScreen(
                 actions = {
                     IconButton(onClick = { viewModel.refresh() }) {
                         Icon(imageVector = Icons.Default.Refresh, contentDescription = "Refresh")
-                    }
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -235,7 +236,8 @@ fun DashboardScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             OutlinedButton(
@@ -243,11 +245,13 @@ fun DashboardScreen(
                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://purelymail.com/billing"))
                                     context.startActivity(intent)
                                 },
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Icon(imageVector = Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(15.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Add Funds / Billing")
+                                Text("Add Funds", maxLines = 1, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                             }
 
                             FilledTonalButton(
@@ -255,11 +259,13 @@ fun DashboardScreen(
                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://inbox.purelymail.com/"))
                                     context.startActivity(intent)
                                 },
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
                             ) {
-                                Icon(imageVector = Icons.Default.Language, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Icon(imageVector = Icons.Default.Language, contentDescription = null, modifier = Modifier.size(15.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Webmail")
+                                Text("Webmail", maxLines = 1, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                             }
                         }
                     }
@@ -359,37 +365,28 @@ fun DashboardScreen(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                FilledTonalButton(
+                DashboardActionTile(
+                    icon = Icons.Default.PersonAdd,
+                    label = "Add User",
                     onClick = onOpenCreateUser,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.PersonAdd, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Add User", fontSize = 12.sp)
-                }
+                    modifier = Modifier.weight(1f)
+                )
 
-                FilledTonalButton(
+                DashboardActionTile(
+                    icon = Icons.Default.AddLink,
+                    label = "Add Domain",
                     onClick = onOpenAddDomain,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.AddLink, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Add Domain", fontSize = 12.sp)
-                }
+                    modifier = Modifier.weight(1f)
+                )
 
-                FilledTonalButton(
+                DashboardActionTile(
+                    icon = Icons.AutoMirrored.Filled.AltRoute,
+                    label = "Add Alias",
                     onClick = onOpenCreateRouting,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.AltRoute, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text("Add Alias", fontSize = 12.sp)
-                }
+                    modifier = Modifier.weight(1f)
+                )
             }
 
             // Email Client Setup Cheat Sheet
@@ -421,6 +418,54 @@ fun DashboardScreen(
                     CopyableRow(label = "Outgoing (SMTP) Server", value = "mail.purelymail.com : 465 (SSL) / 587 (STARTTLS)")
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun DashboardActionTile(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(14.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        border = CardDefaults.outlinedCardBorder(),
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp, horizontal = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(PurelyPurplePrimary.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = PurelyPurplePrimary,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
