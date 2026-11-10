@@ -1,0 +1,1 @@
+Lightweight, private Android client for managing Purelymail accounts & domains.

@@ -1,0 +1,6 @@
+Initial release of PureAdmin:
+- Dashboard with live prepaid account balance and billing links
+- Mailbox and user management (quotas, 2FA, app passwords)
+- Domain DNS health verification (MX, SPF, DKIM, DMARC)
+- Routing rules and instant alias generation
+- Direct-to-server TLS connection with Android Keystore encryption

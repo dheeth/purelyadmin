@@ -1,0 +1,9 @@
+PureAdmin is a lightweight, privacy-first Android client for Purelymail users and administrators. It connects directly from your device to Purelymail's official API to manage mailboxes, routing rules, and domain DNS health with zero telemetry and zero third-party proxy servers.
+
+Key Features:
+• Account Credit: Monitor prepaid balance with instant shortcuts to top up or access Webmail.
+• Mailbox Management: Provision user accounts, adjust storage quotas, manage 2FA, and generate IMAP/SMTP app passwords in one tap.
+• Live DNS Verification: Inspect MX, SPF, DKIM, and DMARC health with automated checkups and DNS setup guidance.
+• Routing Rules: Configure catch-all addresses and generate instant disposable forwarding aliases on the fly.
+• Privacy & Security: Direct TLS 1.3 connections to Purelymail; API tokens are stored in hardware-backed encrypted storage (Android Keystore).
+• Completely Free & Open Source: No ads, no analytics, no trackers, and no non-free dependencies.
