@@ -13,13 +13,31 @@ A fast, modern, privacy-first native Android management client for [Purelymail](
 
 ## 📥 Download & Install
 
-### 📱 F-Droid Repository (Recommended)
-PureAdmin maintains its own official F-Droid repository hosted on GitHub Pages for automatic updates:
+Choose the installation method that fits your workflow:
+
+### 📦 Option 1: Direct APK Download (Manual)
+Download the standalone production-signed APK directly from GitHub Releases:
+
+* **[Download Latest APK (v1.0.0)](https://github.com/dheeth/purelyadmin/releases/download/v1.0.0/pureadmin-v1.0.0.apk)** *(13.8 MB)*
+* **[View All Releases & Assets](https://github.com/dheeth/purelyadmin/releases)**
+
+> **Installation Instructions**:
+> 1. Download the `.apk` file to your Android device.
+> 2. Open your browser's download manager or your device's Files app and tap the APK.
+> 3. If prompted, grant temporary permission to **"Install unknown apps"** from your browser or file manager.
+> 4. Tap **Install**.
+>
+> *Note: The release APK is signed with a dedicated production RSA certificate using APK Signature Scheme v2 and v3. Future releases share this exact key, so subsequent manual updates install seamlessly without uninstalling or losing data.*
+
+---
+
+### 📱 Option 2: F-Droid Repository (Recommended for Auto-Updates)
+PureAdmin maintains its own dedicated F-Droid repository hosted on GitHub Pages:
 
 * **[Add to F-Droid](fdroidrepos://dheeth.github.io/purelyadmin/fdroid/repo?fingerprint=701488C226FBC630EEB76F4770CDE5D92F7FA93C04F5C950D249CAE32D7BDD30)** *(tap on Android with F-Droid, Neo Store, or Droid-ify)*
-* **Web Repository Portal & QR Code**: [https://dheeth.github.io/purelyadmin/](https://dheeth.github.io/purelyadmin/)
+* **Web Portal & QR Code**: [https://dheeth.github.io/purelyadmin/](https://dheeth.github.io/purelyadmin/)
 
-#### Manual Setup in F-Droid:
+#### Manual Repository Setup:
 1. Open F-Droid (or compatible client) → **Settings** → **Repositories** → **+**.
 2. **Repository URL**: `https://dheeth.github.io/purelyadmin/fdroid/repo`
 3. **SHA-256 Fingerprint**:
@@ -29,11 +47,21 @@ PureAdmin maintains its own official F-Droid repository hosted on GitHub Pages f
 
 ---
 
-### 📦 Direct APK (GitHub Releases)
-You can also download the standalone production-signed APK directly:
-* **[Download PureAdmin v1.0.0 APK](https://github.com/dheeth/purelyadmin/releases/download/v1.0.0/pureadmin-v1.0.0.apk)**
+### 🔄 Option 3: Obtainium (Direct GitHub Release Tracker)
+If you use [Obtainium](https://github.com/ImranR98/Obtainium) to manage apps directly from GitHub:
+1. Open Obtainium → **Add App**.
+2. Paste: `https://github.com/dheeth/purelyadmin`
+3. Tap **Add** — Obtainium will automatically track and notify you of new releases.
 
-> **Android Installation Note**: The release APK is signed with a dedicated production RSA certificate using APK Signature Scheme v2 and v3. Android will prompt once to confirm installing from your browser or F-Droid client.
+---
+
+### 🛠️ Option 4: Build from Source
+```bash
+git clone https://github.com/dheeth/purelyadmin.git
+cd purelyadmin
+./gradlew assembleRelease
+# The output APK will be at app/build/outputs/apk/release/app-release-unsigned.apk
+```
 
 ---
 
