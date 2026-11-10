@@ -13,9 +13,14 @@ A fast, modern, privacy-first native Android management client for [Purelymail](
 
 ## 📥 Download & Install
 
-Download the latest signed production APK from the [Releases](https://github.com/dheeth/purelyadmin/releases) page:
-
+### GitHub Releases
+Download the latest signed production APK directly from the [Releases](https://github.com/dheeth/purelyadmin/releases) page:
 * **[Download PureAdmin v1.0.0 APK](https://github.com/dheeth/purelyadmin/releases/download/v1.0.0/pureadmin-v1.0.0.apk)**
+
+### F-Droid
+PureAdmin is fully open source (Apache-2.0) and has zero proprietary dependencies or telemetry. Inclusion recipes and Fastlane metadata are configured in the repository:
+* Track official inclusion status on [F-Droid RFP / GitLab](https://gitlab.com/fdroid/rfp).
+* Pre-compiled builds are available via the [Releases](https://github.com/dheeth/purelyadmin/releases) tab.
 
 > **Android Installation Note**: Since PureAdmin is distributed independently outside the Google Play Store, Android will display a standard prompt asking to allow installations from your browser or file manager. The release APK is signed with a dedicated production RSA certificate using APK Signature Scheme v2 and v3.
 
