@@ -20,7 +20,7 @@ class MainAppTest {
     fun setup() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val tokenManager = TokenManager(context)
-        tokenManager.setDemoMode(true)
+        tokenManager.saveToken("test-token-12345")
         tokenManager.completeOnboarding()
         val repository = PurelymailRepository(tokenManager)
 
@@ -31,7 +31,7 @@ class MainAppTest {
 
     @Test
     fun overviewScreen_isDisplayed() {
-        composeTestRule.onNodeWithText("PurelyAdmin").assertIsDisplayed()
+        composeTestRule.onNodeWithText("PureAdmin").assertIsDisplayed()
         composeTestRule.onNodeWithText("Account Credit").assertIsDisplayed()
         composeTestRule.onNodeWithText("Mailboxes").assertIsDisplayed()
     }

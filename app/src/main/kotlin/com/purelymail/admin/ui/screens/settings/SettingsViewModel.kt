@@ -3,7 +3,6 @@ package com.purelymail.admin.ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.purelymail.admin.data.repository.PurelymailRepository
-import com.purelymail.admin.data.repository.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,18 +10,10 @@ import kotlinx.coroutines.launch
 
 data class SettingsUiState(
     val apiToken: String = "",
-    val serverUrl: String = TokenManager.DEFAULT_SERVER_URL,
-    val isDemoMode: Boolean = false,
-    val isTestingConnection: Boolean = false,
-    val connectionStatus: ConnectionStatus = ConnectionStatus.Idle,
-    val successMessage: String? = null
+    val isSaving: Boolean = false,
+    val savedSuccessfully: Boolean = false,
+    val errorMessage: String? = null
 )
-
-sealed interface ConnectionStatus {
-    object Idle : ConnectionStatus
-    object Success : ConnectionStatus
-    data class Error(val message: String) : ConnectionStatus
-}
 
 class SettingsViewModel(
     private val repository: PurelymailRepository
@@ -32,48 +23,33 @@ class SettingsViewModel(
 
     private val _uiState = MutableStateFlow(
         SettingsUiState(
-            apiToken = tokenManager.apiToken.value,
-            serverUrl = tokenManager.serverUrl.value,
-            isDemoMode = tokenManager.isDemoMode.value
+            apiToken = tokenManager.apiToken.value
         )
     )
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
-    fun updateToken(token: String) {
-        tokenManager.saveToken(token)
-        _uiState.value = _uiState.value.copy(apiToken = token, connectionStatus = ConnectionStatus.Idle)
-    }
-
-    fun updateServerUrl(url: String) {
-        tokenManager.saveServerUrl(url)
-        _uiState.value = _uiState.value.copy(serverUrl = url, connectionStatus = ConnectionStatus.Idle)
-    }
-
-    fun toggleDemoMode(enabled: Boolean) {
-        tokenManager.setDemoMode(enabled)
-        _uiState.value = _uiState.value.copy(isDemoMode = enabled, connectionStatus = ConnectionStatus.Idle)
-    }
-
-    fun testConnection() {
+    fun saveToken(token: String) {
+        val trimmed = token.trim()
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isTestingConnection = true, connectionStatus = ConnectionStatus.Idle)
-            val result = repository.checkCredit()
-            result.onSuccess {
-                _uiState.value = _uiState.value.copy(
-                    isTestingConnection = false,
-                    connectionStatus = ConnectionStatus.Success
-                )
-            }.onFailure { err ->
-                _uiState.value = _uiState.value.copy(
-                    isTestingConnection = false,
-                    connectionStatus = ConnectionStatus.Error(err.message ?: "Authentication failed")
-                )
-            }
+            _uiState.value = _uiState.value.copy(isSaving = true, savedSuccessfully = false, errorMessage = null)
+            tokenManager.saveToken(trimmed)
+            repository.triggerGlobalRefresh()
+            _uiState.value = _uiState.value.copy(
+                apiToken = trimmed,
+                isSaving = false,
+                savedSuccessfully = true,
+                errorMessage = null
+            )
         }
+    }
+
+    fun clearSavedNotice() {
+        _uiState.value = _uiState.value.copy(savedSuccessfully = false, errorMessage = null)
     }
 
     fun clearAllData() {
         tokenManager.clearAll()
+        repository.triggerGlobalRefresh()
         _uiState.value = SettingsUiState()
     }
 

@@ -65,18 +65,15 @@ fun DashboardScreen(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "PurelyAdmin",
+                                text = "PureAdmin",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp
                             )
-                            if (uiState.isDemoMode) {
-                                Text(
-                                    text = "DEMO / MOCK MODE",
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
-                            }
+                            Text(
+                                text = "Purelymail Manager",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                 },
@@ -255,7 +252,7 @@ fun DashboardScreen(
 
                             FilledTonalButton(
                                 onClick = {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://mail.purelymail.com"))
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://inbox.purelymail.com/"))
                                     context.startActivity(intent)
                                 },
                                 shape = RoundedCornerShape(12.dp)

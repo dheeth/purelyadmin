@@ -31,9 +31,6 @@ class TokenManager(context: Context) {
     private val _serverUrl = MutableStateFlow(prefs.getString(KEY_SERVER_URL, DEFAULT_SERVER_URL) ?: DEFAULT_SERVER_URL)
     val serverUrl: StateFlow<String> = _serverUrl.asStateFlow()
 
-    private val _isDemoMode = MutableStateFlow(prefs.getBoolean(KEY_DEMO_MODE, false))
-    val isDemoMode: StateFlow<Boolean> = _isDemoMode.asStateFlow()
-
     private val _hasCompletedOnboarding = MutableStateFlow(prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false))
     val hasCompletedOnboarding: StateFlow<Boolean> = _hasCompletedOnboarding.asStateFlow()
 
@@ -46,11 +43,6 @@ class TokenManager(context: Context) {
         val cleanUrl = if (url.endsWith("/")) url.dropLast(1) else url
         prefs.edit().putString(KEY_SERVER_URL, cleanUrl).apply()
         _serverUrl.value = cleanUrl
-    }
-
-    fun setDemoMode(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_DEMO_MODE, enabled).apply()
-        _isDemoMode.value = enabled
     }
 
     fun completeOnboarding() {
@@ -67,18 +59,16 @@ class TokenManager(context: Context) {
         prefs.edit().clear().apply()
         _apiToken.value = ""
         _serverUrl.value = DEFAULT_SERVER_URL
-        _isDemoMode.value = false
         _hasCompletedOnboarding.value = false
     }
 
     val hasValidToken: Boolean
-        get() = _apiToken.value.isNotBlank() || _isDemoMode.value
+        get() = _apiToken.value.isNotBlank()
 
     companion object {
         const val DEFAULT_SERVER_URL = "https://purelymail.com"
         private const val KEY_API_TOKEN = "purelymail_api_token"
         private const val KEY_SERVER_URL = "purelymail_server_url"
-        private const val KEY_DEMO_MODE = "purelymail_demo_mode"
         private const val KEY_ONBOARDING_COMPLETED = "purelymail_onboarding_completed"
     }
 }

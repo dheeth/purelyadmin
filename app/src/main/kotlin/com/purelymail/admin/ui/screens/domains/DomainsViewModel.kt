@@ -30,6 +30,12 @@ class DomainsViewModel(
     init {
         loadDomains()
         loadOwnershipCode()
+        viewModelScope.launch {
+            repository.refreshSignal.collect {
+                loadDomains()
+                loadOwnershipCode()
+            }
+        }
     }
 
     fun loadDomains() {

@@ -15,7 +15,6 @@ data class DashboardUiState(
     val isLoading: Boolean = false,
     val summary: DashboardSummary? = null,
     val error: String? = null,
-    val isDemoMode: Boolean = false,
     val generatedQuickAlias: String? = null
 )
 
@@ -23,16 +22,21 @@ class DashboardViewModel(
     private val repository: PurelymailRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(DashboardUiState(isDemoMode = repository.isDemoMode.value))
+    private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     init {
         refresh()
+        viewModelScope.launch {
+            repository.refreshSignal.collect {
+                refresh()
+            }
+        }
     }
 
     fun refresh() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null, isDemoMode = repository.isDemoMode.value)
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             val result = repository.getDashboardSummary()
             result.onSuccess { summary ->
                 _uiState.value = _uiState.value.copy(

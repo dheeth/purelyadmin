@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,17 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.purelymail.admin.ui.components.ConfirmDeleteDialog
-import com.purelymail.admin.ui.components.CopyableRow
 import com.purelymail.admin.ui.theme.PurelyPurplePrimary
 import com.purelymail.admin.ui.theme.StatusSuccess
-import com.purelymail.admin.ui.theme.StatusWarning
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,14 +42,12 @@ fun SettingsScreen(
 
     var tokenInput by remember(uiState.apiToken) { mutableStateOf(uiState.apiToken) }
     var tokenVisible by remember { mutableStateOf(false) }
-
-    var serverUrlInput by remember(uiState.serverUrl) { mutableStateOf(uiState.serverUrl) }
     var showResetConfirm by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings & Connection", fontWeight = FontWeight.Bold) }
+                title = { Text("Settings", fontWeight = FontWeight.Bold) }
             )
         },
         modifier = modifier
@@ -85,13 +83,16 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text("Purelymail API Token", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                            Text("Required for live account synchronization", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("Stored locally in hardware-backed encrypted storage", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
 
                     OutlinedTextField(
                         value = tokenInput,
-                        onValueChange = { tokenInput = it },
+                        onValueChange = {
+                            tokenInput = it
+                            viewModel.clearSavedNotice()
+                        },
                         label = { Text("API Token") },
                         placeholder = { Text("Paste your Purelymail token here") },
                         singleLine = true,
@@ -109,273 +110,73 @@ fun SettingsScreen(
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Button(
-                            onClick = {
-                                viewModel.updateToken(tokenInput)
-                                viewModel.testConnection()
-                            },
-                            enabled = tokenInput.isNotBlank() && !uiState.isTestingConnection,
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            if (uiState.isTestingConnection) {
-                                CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Verifying...")
-                            } else {
-                                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Save & Test")
-                            }
-                        }
-
                         OutlinedButton(
                             onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://purelymail.com/account"))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://purelymail.com/manage/account"))
                                 context.startActivity(intent)
                             },
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon(imageVector = Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Icon(imageVector = Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("Get Token")
                         }
-                    }
 
-                    // Connection test result
-                    when (val status = uiState.connectionStatus) {
-                        is ConnectionStatus.Success -> {
-                            Surface(
-                                color = StatusSuccess.copy(alpha = 0.15f),
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = StatusSuccess, modifier = Modifier.size(18.dp))
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Authentication successful! Connected to Purelymail.", fontSize = 12.sp, color = StatusSuccess, fontWeight = FontWeight.SemiBold)
-                                }
+                        Button(
+                            onClick = { viewModel.saveToken(tokenInput) },
+                            enabled = tokenInput.isNotBlank() && !uiState.isSaving,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            if (uiState.isSaving) {
+                                CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Saving...")
+                            } else {
+                                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Save")
                             }
                         }
-                        is ConnectionStatus.Error -> {
-                            Surface(
-                                color = MaterialTheme.colorScheme.errorContainer,
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.fillMaxWidth()
+                    }
+
+                    // Success Feedback
+                    AnimatedVisibility(visible = uiState.savedSuccessfully) {
+                        Surface(
+                            color = StatusSuccess.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(imageVector = Icons.Default.Cancel, contentDescription = null, tint = MaterialTheme.colorScheme.error, modifier = Modifier.size(18.dp))
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(status.message, fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
-                                }
+                                Icon(imageVector = Icons.Default.CheckCircle, contentDescription = null, tint = StatusSuccess, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("API Token saved. All screens refreshed automatically!", fontSize = 12.sp, color = StatusSuccess, fontWeight = FontWeight.SemiBold)
                             }
                         }
-                        ConnectionStatus.Idle -> {}
                     }
                 }
             }
 
-            // Interactive Demo Mode Card
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = CardDefaults.outlinedCardBorder()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Default.Science, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("Interactive Demo / Mock Mode", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Explore all features, generate aliases, and test user management with simulated Purelymail data without a real API key.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = uiState.isDemoMode,
-                        onCheckedChange = { viewModel.toggleDemoMode(it) }
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(4.dp))
 
-            // Security & Direct Architecture Card
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = CardDefaults.outlinedCardBorder()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(imageVector = Icons.Default.Security, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text("Security & Privacy Architecture", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                            Text("100% on-device direct communication", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                    }
-
-                    Card(
-                        shape = RoundedCornerShape(10.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                text = "• Direct Client-to-Server: All network calls are made directly from your phone to purelymail.com over TLS 1.3.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "• No Intermediary Servers: We do not operate proxy servers or databases. Your API key and passwords never route through any third party.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "• Hardware-Backed Keystore: Tokens are encrypted on-device via Android Keystore and EncryptedSharedPreferences (AES-256).",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Purelymail Terms & Anti-Abuse Guidelines
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = CardDefaults.outlinedCardBorder()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(StatusWarning.copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(imageVector = Icons.Default.Gavel, contentDescription = null, tint = StatusWarning, modifier = Modifier.size(20.dp))
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text("Acceptable Use & Anti-Abuse Policy", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                            Text("Strict guidelines enforced by Purelymail", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                    }
-
-                    Card(
-                        shape = RoundedCornerShape(10.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                text = "• Strict Anti-Spam Ban: Purelymail prohibits domain warming, bulk marketing lists, unsolicited commercial email, and deceptive automation. Accounts violating these rules are terminated without refund.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "• Rate Limits & Server Respect: The app automatically throttles requests and applies exponential backoff for HTTP 429 responses to preserve server stability.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Server URL configuration
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = CardDefaults.outlinedCardBorder()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text("API Server Endpoint", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                    Text("Default is official production server. Change only for custom proxies or testing.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-
-                    OutlinedTextField(
-                        value = serverUrlInput,
-                        onValueChange = {
-                            serverUrlInput = it
-                            viewModel.updateServerUrl(it)
-                        },
-                        label = { Text("Server Base URL") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            // Official Resources & Links
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                border = CardDefaults.outlinedCardBorder()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text("Official Purelymail Resources", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-
-                    ResourceLinkRow(title = "Purelymail Webmail", subtitle = "mail.purelymail.com", url = "https://mail.purelymail.com")
-                    ResourceLinkRow(title = "Swagger / OpenAPI Docs", subtitle = "news.purelymail.com/api/index.html", url = "https://news.purelymail.com/api/index.html")
-                    ResourceLinkRow(title = "Account & Billing Portal", subtitle = "purelymail.com/account", url = "https://purelymail.com/account")
-                }
-            }
-
+            // Disconnect & Run Setup Again
             OutlinedButton(
                 onClick = { viewModel.resetOnboarding() },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Icon(imageVector = Icons.Default.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
+                Icon(imageVector = Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Disconnect & Run Setup Again")
             }
 
-            // Clear configuration
+            // Clear All App Data & Token
             OutlinedButton(
                 onClick = { showResetConfirm = true },
                 modifier = Modifier.fillMaxWidth(),
@@ -384,10 +185,11 @@ fun SettingsScreen(
             ) {
                 Icon(imageVector = Icons.Default.DeleteForever, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Clear All App Data & Token")
+                Text("Clear All App Data and Token")
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -405,7 +207,7 @@ fun SettingsScreen(
                     text = "PureAdmin is an independent third-party management utility and is not affiliated with, authorized, or endorsed by Add Rabbit LLC or Purelymail.",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -413,8 +215,8 @@ fun SettingsScreen(
 
     if (showResetConfirm) {
         ConfirmDeleteDialog(
-            title = "Reset App Configuration?",
-            message = "This will erase your saved API token and revert server settings to defaults.",
+            title = "Clear All App Data?",
+            message = "This will permanently erase your saved API token from encrypted storage and reset all app state.",
             onConfirm = {
                 viewModel.clearAllData()
                 tokenInput = ""
@@ -422,35 +224,5 @@ fun SettingsScreen(
             },
             onDismiss = { showResetConfirm = false }
         )
-    }
-}
-
-@Composable
-fun ResourceLinkRow(
-    title: String,
-    subtitle: String,
-    url: String
-) {
-    val context = LocalContext.current
-    Surface(
-        onClick = {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            context.startActivity(intent)
-        },
-        shape = RoundedCornerShape(10.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(title, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                Text(subtitle, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            Icon(imageVector = Icons.Default.OpenInNew, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
-        }
     }
 }

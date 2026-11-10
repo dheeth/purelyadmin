@@ -29,6 +29,11 @@ class RoutingViewModel(
 
     init {
         loadData()
+        viewModelScope.launch {
+            repository.refreshSignal.collect {
+                loadData()
+            }
+        }
     }
 
     fun loadData() {

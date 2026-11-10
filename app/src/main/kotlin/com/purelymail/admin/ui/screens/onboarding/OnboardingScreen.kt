@@ -214,7 +214,7 @@ fun OnboardingScreen(
                     ) {
                         OutlinedButton(
                             onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://purelymail.com/account"))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://purelymail.com/manage/account"))
                                 context.startActivity(intent)
                             },
                             shape = RoundedCornerShape(12.dp),
@@ -245,51 +245,15 @@ fun OnboardingScreen(
                 }
             }
 
-            // Or Demo Mode option
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    HorizontalDivider(modifier = Modifier.weight(1f))
-                    Text(
-                        text = " OR ",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                    HorizontalDivider(modifier = Modifier.weight(1f))
-                }
+            Spacer(modifier = Modifier.height(8.dp))
 
-                FilledTonalButton(
-                    onClick = { viewModel.startDemoMode(onComplete) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.Science, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Explore with Interactive Demo Data")
-                }
-
-                Text(
-                    text = "Test all features safely with simulated mailboxes and domains without an account.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                    textAlign = TextAlign.Center
-                )
-
-                Text(
-                    text = "PureAdmin is an independent utility and is not affiliated with or endorsed by Add Rabbit LLC / Purelymail.",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+            Text(
+                text = "PureAdmin is an independent utility and is not affiliated with or endorsed by Add Rabbit LLC / Purelymail.",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 8.dp)
+            )
         }
     }
 }

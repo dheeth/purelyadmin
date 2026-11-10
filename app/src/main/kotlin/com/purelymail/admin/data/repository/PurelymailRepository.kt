@@ -1,10 +1,11 @@
 package com.purelymail.admin.data.repository
 
-import com.purelymail.admin.data.api.MockPurelymailApiClient
 import com.purelymail.admin.data.api.PurelymailApiClient
 import com.purelymail.admin.data.api.RealPurelymailApiClient
 import com.purelymail.admin.data.model.*
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 data class DashboardSummary(
     val credit: CheckCreditResponse? = null,
@@ -21,31 +22,28 @@ data class EmailClientConfig(
     val smtpHost: String = "mail.purelymail.com",
     val smtpPort: Int = 465,
     val smtpSecurity: String = "SSL / TLS (or 587 STARTTLS)",
-    val webmailUrl: String = "https://mail.purelymail.com"
+    val webmailUrl: String = "https://inbox.purelymail.com/"
 )
 
 class PurelymailRepository(
     val tokenManager: TokenManager
 ) {
-    private val realClient = RealPurelymailApiClient(tokenManager)
-    private val mockClient = MockPurelymailApiClient()
+    val client: PurelymailApiClient = RealPurelymailApiClient(tokenManager)
 
-    val client: PurelymailApiClient
-        get() = if (tokenManager.isDemoMode.value || tokenManager.apiToken.value.isBlank()) {
-            mockClient
-        } else {
-            realClient
-        }
+    private val _refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val refreshSignal: SharedFlow<Unit> = _refreshSignal.asSharedFlow()
 
-    val isDemoMode: StateFlow<Boolean> = tokenManager.isDemoMode
+    fun triggerGlobalRefresh() {
+        _refreshSignal.tryEmit(Unit)
+    }
+
     val hasValidToken: Boolean get() = tokenManager.hasValidToken
 
     suspend fun getDashboardSummary(): Result<DashboardSummary> {
-        val activeClient = client
-        val creditRes = activeClient.checkAccountCredit()
-        val usersRes = activeClient.listUsers()
-        val domainsRes = activeClient.listDomains(includeShared = false)
-        val rulesRes = activeClient.listRoutingRules()
+        val creditRes = client.checkAccountCredit()
+        val usersRes = client.listUsers()
+        val domainsRes = client.listDomains(includeShared = false)
+        val rulesRes = client.listRoutingRules()
 
         val credit = creditRes.getOrNull()
         val users = usersRes.getOrNull() ?: emptyList()
@@ -67,7 +65,7 @@ class PurelymailRepository(
 
     val clientConfig = EmailClientConfig()
 
-    // Pass-through helpers for convenience
+    // Pass-through helpers
     suspend fun checkCredit(): Result<CheckCreditResponse> = client.checkAccountCredit()
     suspend fun listUsers(): Result<List<String>> = client.listUsers()
     suspend fun getUser(userName: String): Result<GetUserResponse> = client.getUser(userName)

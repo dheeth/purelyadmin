@@ -32,6 +32,11 @@ class UsersViewModel(
 
     init {
         loadUsers()
+        viewModelScope.launch {
+            repository.refreshSignal.collect {
+                loadUsers()
+            }
+        }
     }
 
     fun loadUsers() {

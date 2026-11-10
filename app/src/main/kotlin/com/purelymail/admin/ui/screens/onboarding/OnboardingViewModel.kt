@@ -35,13 +35,12 @@ class OnboardingViewModel(
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            // Temporarily save token to test
             repository.tokenManager.saveToken(token)
-            repository.tokenManager.setDemoMode(false)
 
             val result = repository.checkCredit()
             result.onSuccess {
                 repository.tokenManager.completeOnboarding()
+                repository.triggerGlobalRefresh()
                 _uiState.value = _uiState.value.copy(isLoading = false, success = true)
                 onSuccess()
             }.onFailure { err ->
@@ -51,11 +50,5 @@ class OnboardingViewModel(
                 )
             }
         }
-    }
-
-    fun startDemoMode(onSuccess: () -> Unit) {
-        repository.tokenManager.setDemoMode(true)
-        repository.tokenManager.completeOnboarding()
-        onSuccess()
     }
 }
