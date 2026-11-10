@@ -13,16 +13,27 @@ A fast, modern, privacy-first native Android management client for [Purelymail](
 
 ## 📥 Download & Install
 
-### GitHub Releases
-Download the latest signed production APK directly from the [Releases](https://github.com/dheeth/purelyadmin/releases) page:
+### 📱 F-Droid Repository (Recommended)
+PureAdmin maintains its own official F-Droid repository hosted on GitHub Pages for automatic updates:
+
+* **[Add to F-Droid](fdroidrepos://dheeth.github.io/purelyadmin/fdroid/repo?fingerprint=701488C226FBC630EEB76F4770CDE5D92F7FA93C04F5C950D249CAE32D7BDD30)** *(tap on Android with F-Droid, Neo Store, or Droid-ify)*
+* **Web Repository Portal & QR Code**: [https://dheeth.github.io/purelyadmin/](https://dheeth.github.io/purelyadmin/)
+
+#### Manual Setup in F-Droid:
+1. Open F-Droid (or compatible client) → **Settings** → **Repositories** → **+**.
+2. **Repository URL**: `https://dheeth.github.io/purelyadmin/fdroid/repo`
+3. **SHA-256 Fingerprint**:
+   ```text
+   701488C226FBC630EEB76F4770CDE5D92F7FA93C04F5C950D249CAE32D7BDD30
+   ```
+
+---
+
+### 📦 Direct APK (GitHub Releases)
+You can also download the standalone production-signed APK directly:
 * **[Download PureAdmin v1.0.0 APK](https://github.com/dheeth/purelyadmin/releases/download/v1.0.0/pureadmin-v1.0.0.apk)**
 
-### F-Droid
-PureAdmin is fully open source (Apache-2.0) and has zero proprietary dependencies or telemetry. Inclusion recipes and Fastlane metadata are configured in the repository:
-* Track official inclusion status on [F-Droid RFP / GitLab](https://gitlab.com/fdroid/rfp).
-* Pre-compiled builds are available via the [Releases](https://github.com/dheeth/purelyadmin/releases) tab.
-
-> **Android Installation Note**: Since PureAdmin is distributed independently outside the Google Play Store, Android will display a standard prompt asking to allow installations from your browser or file manager. The release APK is signed with a dedicated production RSA certificate using APK Signature Scheme v2 and v3.
+> **Android Installation Note**: The release APK is signed with a dedicated production RSA certificate using APK Signature Scheme v2 and v3. Android will prompt once to confirm installing from your browser or F-Droid client.
 
 ---
 
