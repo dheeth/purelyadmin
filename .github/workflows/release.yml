@@ -31,16 +31,20 @@ jobs:
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
 
       - name: Setup Release Signing Keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
         run: |
-          keytool -genkeypair -v -keystore app/pureadmin-release.jks \
-            -alias pureadmin -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass "PureAdmin2026SecureKey" -keypass "PureAdmin2026SecureKey" \
-            -dname "CN=PureAdmin, OU=Mobile, O=PureAdmin Open Source, C=US"
-          cat << 'EOF' > keystore.properties
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::RELEASE_KEYSTORE_BASE64 secret is missing! A persistent keystore is required so that updates have matching signatures."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/pureadmin-release.jks
+          cat << EOF > keystore.properties
           storeFile=pureadmin-release.jks
-          storePassword=PureAdmin2026SecureKey
+          storePassword=${KEYSTORE_PASSWORD:-PureAdmin2026SecureKey}
           keyAlias=pureadmin
-          keyPassword=PureAdmin2026SecureKey
+          keyPassword=${KEYSTORE_PASSWORD:-PureAdmin2026SecureKey}
           EOF
 
       - name: Grant Execute Permission to Gradlew
