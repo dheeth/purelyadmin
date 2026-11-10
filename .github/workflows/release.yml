@@ -25,15 +25,42 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android Platform 36 & Build-Tools
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Setup Release Signing Keystore
+        run: |
+          keytool -genkeypair -v -keystore app/pureadmin-release.jks \
+            -alias pureadmin -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "PureAdmin2026SecureKey" -keypass "PureAdmin2026SecureKey" \
+            -dname "CN=PureAdmin, OU=Mobile, O=PureAdmin Open Source, C=US"
+          cat << 'EOF' > keystore.properties
+          storeFile=pureadmin-release.jks
+          storePassword=PureAdmin2026SecureKey
+          keyAlias=pureadmin
+          keyPassword=PureAdmin2026SecureKey
+          EOF
+
       - name: Grant Execute Permission to Gradlew
         run: chmod +x gradlew
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Build Release APK & Bundle
+        run: ./gradlew assembleRelease bundleRelease
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease
-        continue-on-error: true
+      - name: Prepare Release Artifacts
+        run: |
+          mkdir -p artifacts
+          VERSION_TAG="${{ github.ref_name }}"
+          if [ -z "$VERSION_TAG" ]; then
+            VERSION_TAG="v1.0.0"
+          fi
+          cp app/build/outputs/apk/release/app-release.apk "artifacts/pureadmin-${VERSION_TAG}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "artifacts/pureadmin-${VERSION_TAG}.aab"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -45,5 +72,5 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            app/build/outputs/apk/release/app-release.apk
-            app/build/outputs/apk/debug/app-debug.apk
+            artifacts/*.apk
+            artifacts/*.aab
