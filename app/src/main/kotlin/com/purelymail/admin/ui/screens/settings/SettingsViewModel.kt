@@ -76,4 +76,8 @@ class SettingsViewModel(
         tokenManager.clearAll()
         _uiState.value = SettingsUiState()
     }
+
+    fun resetOnboarding() {
+        tokenManager.resetOnboarding()
+    }
 }

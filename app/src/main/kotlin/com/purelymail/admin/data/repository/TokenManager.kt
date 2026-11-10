@@ -22,7 +22,6 @@ class TokenManager(context: Context) {
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
     } catch (e: Exception) {
-        // Fallback for emulators/environments with Keystore anomalies
         context.getSharedPreferences("purelymail_fallback_prefs", Context.MODE_PRIVATE)
     }
 
@@ -34,6 +33,9 @@ class TokenManager(context: Context) {
 
     private val _isDemoMode = MutableStateFlow(prefs.getBoolean(KEY_DEMO_MODE, false))
     val isDemoMode: StateFlow<Boolean> = _isDemoMode.asStateFlow()
+
+    private val _hasCompletedOnboarding = MutableStateFlow(prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false))
+    val hasCompletedOnboarding: StateFlow<Boolean> = _hasCompletedOnboarding.asStateFlow()
 
     fun saveToken(token: String) {
         prefs.edit().putString(KEY_API_TOKEN, token.trim()).apply()
@@ -51,11 +53,22 @@ class TokenManager(context: Context) {
         _isDemoMode.value = enabled
     }
 
+    fun completeOnboarding() {
+        prefs.edit().putBoolean(KEY_ONBOARDING_COMPLETED, true).apply()
+        _hasCompletedOnboarding.value = true
+    }
+
+    fun resetOnboarding() {
+        prefs.edit().putBoolean(KEY_ONBOARDING_COMPLETED, false).apply()
+        _hasCompletedOnboarding.value = false
+    }
+
     fun clearAll() {
         prefs.edit().clear().apply()
         _apiToken.value = ""
         _serverUrl.value = DEFAULT_SERVER_URL
         _isDemoMode.value = false
+        _hasCompletedOnboarding.value = false
     }
 
     val hasValidToken: Boolean
@@ -66,5 +79,6 @@ class TokenManager(context: Context) {
         private const val KEY_API_TOKEN = "purelymail_api_token"
         private const val KEY_SERVER_URL = "purelymail_server_url"
         private const val KEY_DEMO_MODE = "purelymail_demo_mode"
+        private const val KEY_ONBOARDING_COMPLETED = "purelymail_onboarding_completed"
     }
 }

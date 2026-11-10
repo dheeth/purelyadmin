@@ -2,39 +2,49 @@ package com.purelymail.admin.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Purelymail Brand Colors (Modern Indigo, Deep Violet & Electric Accents)
-val PurelyPurplePrimary = Color(0xFF5E35B1)
-val PurelyPurpleSecondary = Color(0xFF7E57C2)
-val PurelyPurpleTertiary = Color(0xFF651FFF)
-val PurelyPurpleDark = Color(0xFF311B92)
-val PurelyPurpleLight = Color(0xFFD1C4E9)
-val PurelyPurpleContainer = Color(0xFFEDE7F6)
-val PurelyPurpleContainerDark = Color(0xFF261D45)
+// Purelymail Official Design System Colors (from purelymail.com pm-styles.css)
+val PmPurple50 = Color(0xFFF6F4FB)
+val PmPurple100 = Color(0xFFEEE7FD)
+val PmPurple200 = Color(0xFFCCBBF7)
+val PmPurple300 = Color(0xFF9B7BEA)
+val PmPurple400 = Color(0xFF7A52E0)
+val PmPurple500 = Color(0xFF551A8B)
+val PmPurple600 = Color(0xFF471FAD) // Signature Purelymail Purple
+val PmPurple700 = Color(0xFF351782)
+val PmPurple800 = Color(0xFF220D59)
+val PmPurple900 = Color(0xFF16083A)
 
-// Status & Functional Colors
-val StatusSuccess = Color(0xFF00C853)
-val StatusSuccessContainer = Color(0xFFE8F5E9)
-val StatusSuccessContainerDark = Color(0xFF1B3822)
+// Purelymail Mascot & Logo Accents
+val PmLogoPurple = Color(0xFF6C007C)
+val PmLogoDarkPurple = Color(0xFF430F4B)
+val PmEnvelopePink = Color(0xFFE8A0C8)
+val PmDarkGreen = Color(0xFF3E6A09)
+val PmLightGreen = Color(0xFFECFCD8)
 
-val StatusWarning = Color(0xFFFF9100)
-val StatusWarningContainer = Color(0xFFFFF3E0)
+// Status & Verification Colors
+val StatusSuccess = Color(0xFF28A745)
+val StatusWarning = Color(0xFFFFC107)
+val StatusWarningDark = Color(0xFFFF9100)
+val StatusError = Color(0xFFDC3545)
+val StatusInfo = Color(0xFF007BFF)
+
+// Neutrals
+val DarkVoidBackground = Color(0xFF0F0821)
+val DarkElevatedSurface = Color(0xFF16083A)
+val DarkSurfaceVariant = Color(0xFF220D59)
+val DarkOutline = Color(0xFF351782)
+
+val LightCleanBackground = Color(0xFFF6F4FB)
+val LightCleanSurface = Color(0xFFFFFFFF)
+val LightSurfaceVariant = Color(0xFFEEE7FD)
+val LightOutline = Color(0xFFCCBBF7)
+
+// Backward-compatible semantic aliases
+val PurelyPurplePrimary = PmPurple600
+val PurelyPurpleSecondary = PmPurple400
+val PurelyPurpleTertiary = PmPurple300
+val PurelyPurpleDark = PmPurple800
+val PurelyPurpleLight = PmPurple200
+val PurelyPurpleContainer = PmPurple100
+val PurelyPurpleContainerDark = PmPurple800
 val StatusWarningContainerDark = Color(0xFF3E2800)
-
-val StatusError = Color(0xFFE53935)
-val StatusErrorContainer = Color(0xFFFFEBEE)
-val StatusErrorContainerDark = Color(0xFF3C1414)
-
-val StatusInfo = Color(0xFF0288D1)
-val StatusInfoContainer = Color(0xFFE1F5FE)
-val StatusInfoContainerDark = Color(0xFF0D2838)
-
-// Neutral Dark & Light
-val DarkBackground = Color(0xFF0E0B16)
-val DarkSurface = Color(0xFF161224)
-val DarkSurfaceVariant = Color(0xFF221B35)
-val DarkBorder = Color(0xFF332950)
-
-val LightBackground = Color(0xFFF9F8FD)
-val LightSurface = Color(0xFFFFFFFF)
-val LightSurfaceVariant = Color(0xFFF2F0F9)
-val LightBorder = Color(0xFFE2DFEC)

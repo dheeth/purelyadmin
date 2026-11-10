@@ -21,6 +21,7 @@ class MainAppTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val tokenManager = TokenManager(context)
         tokenManager.setDemoMode(true)
+        tokenManager.completeOnboarding()
         val repository = PurelymailRepository(tokenManager)
 
         composeTestRule.setContent {

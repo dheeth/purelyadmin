@@ -9,14 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.purelymail.admin.data.repository.PurelymailRepository
-import com.purelymail.admin.data.repository.TokenManager
 import com.purelymail.admin.ui.screens.dashboard.DashboardScreen
 import com.purelymail.admin.ui.screens.dashboard.DashboardViewModel
 import com.purelymail.admin.ui.screens.domains.DomainsScreen
 import com.purelymail.admin.ui.screens.domains.DomainsViewModel
+import com.purelymail.admin.ui.screens.onboarding.OnboardingScreen
+import com.purelymail.admin.ui.screens.onboarding.OnboardingViewModel
 import com.purelymail.admin.ui.screens.routing.RoutingScreen
 import com.purelymail.admin.ui.screens.routing.RoutingViewModel
 import com.purelymail.admin.ui.screens.settings.SettingsScreen
@@ -40,6 +39,8 @@ enum class PurelyNavTab(
 fun MainApp(
     repository: PurelymailRepository
 ) {
+    val hasCompletedOnboarding by repository.tokenManager.hasCompletedOnboarding.collectAsState()
+
     var selectedTab by remember { mutableStateOf(PurelyNavTab.Dashboard) }
 
     val dashboardViewModel = remember { DashboardViewModel(repository) }
@@ -47,62 +48,80 @@ fun MainApp(
     val domainsViewModel = remember { DomainsViewModel(repository) }
     val routingViewModel = remember { RoutingViewModel(repository) }
     val settingsViewModel = remember { SettingsViewModel(repository) }
+    val onboardingViewModel = remember { OnboardingViewModel(repository) }
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                PurelyNavTab.values().forEach { tab ->
-                    val selected = selectedTab == tab
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = { selectedTab = tab },
-                        icon = {
-                            Icon(
-                                imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
-                                contentDescription = tab.title
+    AnimatedContent(
+        targetState = hasCompletedOnboarding,
+        label = "OnboardingTransition"
+    ) { completed ->
+        if (!completed) {
+            OnboardingScreen(
+                viewModel = onboardingViewModel,
+                onComplete = {
+                    dashboardViewModel.refresh()
+                    usersViewModel.loadUsers()
+                    domainsViewModel.loadDomains()
+                    routingViewModel.loadData()
+                }
+            )
+        } else {
+            Scaffold(
+                bottomBar = {
+                    NavigationBar {
+                        PurelyNavTab.values().forEach { tab ->
+                            val selected = selectedTab == tab
+                            NavigationBarItem(
+                                selected = selected,
+                                onClick = { selectedTab = tab },
+                                icon = {
+                                    Icon(
+                                        imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
+                                        contentDescription = tab.title
+                                    )
+                                },
+                                label = { Text(tab.title) }
                             )
-                        },
-                        label = { Text(tab.title) }
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            when (selectedTab) {
-                PurelyNavTab.Dashboard -> {
-                    DashboardScreen(
-                        viewModel = dashboardViewModel,
-                        onNavigateToUsers = { selectedTab = PurelyNavTab.Users },
-                        onNavigateToDomains = { selectedTab = PurelyNavTab.Domains },
-                        onNavigateToRouting = { selectedTab = PurelyNavTab.Routing },
-                        onNavigateToSettings = { selectedTab = PurelyNavTab.Settings },
-                        onOpenCreateUser = {
-                            selectedTab = PurelyNavTab.Users
-                        },
-                        onOpenAddDomain = {
-                            selectedTab = PurelyNavTab.Domains
-                        },
-                        onOpenCreateRouting = {
-                            selectedTab = PurelyNavTab.Routing
                         }
-                    )
+                    }
                 }
-                PurelyNavTab.Users -> {
-                    UsersScreen(viewModel = usersViewModel)
-                }
-                PurelyNavTab.Domains -> {
-                    DomainsScreen(viewModel = domainsViewModel)
-                }
-                PurelyNavTab.Routing -> {
-                    RoutingScreen(viewModel = routingViewModel)
-                }
-                PurelyNavTab.Settings -> {
-                    SettingsScreen(viewModel = settingsViewModel)
+            ) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
+                    when (selectedTab) {
+                        PurelyNavTab.Dashboard -> {
+                            DashboardScreen(
+                                viewModel = dashboardViewModel,
+                                onNavigateToUsers = { selectedTab = PurelyNavTab.Users },
+                                onNavigateToDomains = { selectedTab = PurelyNavTab.Domains },
+                                onNavigateToRouting = { selectedTab = PurelyNavTab.Routing },
+                                onNavigateToSettings = { selectedTab = PurelyNavTab.Settings },
+                                onOpenCreateUser = {
+                                    selectedTab = PurelyNavTab.Users
+                                },
+                                onOpenAddDomain = {
+                                    selectedTab = PurelyNavTab.Domains
+                                },
+                                onOpenCreateRouting = {
+                                    selectedTab = PurelyNavTab.Routing
+                                }
+                            )
+                        }
+                        PurelyNavTab.Users -> {
+                            UsersScreen(viewModel = usersViewModel)
+                        }
+                        PurelyNavTab.Domains -> {
+                            DomainsScreen(viewModel = domainsViewModel)
+                        }
+                        PurelyNavTab.Routing -> {
+                            RoutingScreen(viewModel = routingViewModel)
+                        }
+                        PurelyNavTab.Settings -> {
+                            SettingsScreen(viewModel = settingsViewModel)
+                        }
+                    }
                 }
             }
         }

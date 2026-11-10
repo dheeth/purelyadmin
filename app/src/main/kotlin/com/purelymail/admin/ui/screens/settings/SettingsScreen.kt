@@ -260,6 +260,16 @@ fun SettingsScreen(
                 }
             }
 
+            OutlinedButton(
+                onClick = { viewModel.resetOnboarding() },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Disconnect & Run Setup Again")
+            }
+
             // Clear configuration
             OutlinedButton(
                 onClick = { showResetConfirm = true },
